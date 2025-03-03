@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple Demo | anime.js</title>
+  <meta charset="utf-8">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #F6F4F2;
+    }
+    .box {
+      width: 100px;
+      height: 100px;
+      background-color: #FF0000;
+    }
+  </style>
+</head>
+<body>
+  <div class="box"></div>
+  <script src="../../lib/anime.min.js"></script>
+  <script>
+    console.log('Script is running');
+    if (typeof anime === 'undefined') {
+      console.error('Anime.js is not loaded!');
+    } else {
+      console.log('Anime.js is loaded successfully');
+      anime({
+        targets: '.box',
+        translateX: 250,
+        rotate: '1turn',
+        duration: 800,
+        loop: true,
+        direction: 'alternate',
+        easing: 'easeInOutQuad'
+      });
+    }
+  </script>
+</body>
+</html> 

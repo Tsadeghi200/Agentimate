@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentimate - The AI Design Agent</title>
+    <script src="lib/anime.min.js"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #4f46e5;
+            --background: #0a0a0a;
+            --text: #ffffff;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 4rem;
+        }
+
+        .hero {
+            position: relative;
+            text-align: center;
+            padding: 4rem 0;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            opacity: 1;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            color: #94a3b8;
+            margin-bottom: 2rem;
+            opacity: 1;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--gradient);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            opacity: 1;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .demo-section {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .input-container {
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            position: relative;
+        }
+
+        .demo-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            font-size: 1.2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text);
+        }
+
+        .animation-stage {
+            height: 300px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .demo-scene {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        .bounce-element {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .morph-element {
+            width: 100px;
+            height: 100px;
+            background: var(--gradient);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .path-element {
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 6;
+            stroke-linecap: round;
+            filter: drop-shadow(0 0 8px var(--primary));
+        }
+
+        #logo {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 2rem;
+            position: relative;
+        }
+
+        #logo svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .logo-path {
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 3;
+            stroke-linecap: round;
+        }
+
+        .debug-info {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            color: #fff;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-info">
+        <div id="anime-status">Anime.js Status: Checking...</div>
+        <div id="scene-status">Current Scene: None</div>
+    </div>
+
+    <div class="container">
+        <div class="hero">
+            <div id="logo">
+                <svg viewBox="0 0 100 100">
+                    <path class="logo-path" d="M20,50 Q50,20 80,50 Q50,80 20,50"></path>
+                </svg>
+            </div>
+            <h1>Idea to design in seconds.</h1>
+            <p>Agentimate is your superhuman AI design partner. Start creating for free today.</p>
+            <a href="#" class="cta-button">Start Creating</a>
+        </div>
+
+        <div class="demo-section">
+            <div class="input-container">
+                <div class="demo-input">
+                    <span class="typing-text">Type your animation idea here...</span><span class="cursor"></span>
+                </div>
+            </div>
+            <div class="animation-stage">
+                <div class="demo-scene" id="scene1">
+                    <div class="bounce-element"></div>
+                </div>
+                <div class="demo-scene" id="scene2">
+                    <div class="morph-element"></div>
+                </div>
+                <div class="demo-scene" id="scene3">
+                    <svg viewBox="0 0 400 200" width="100%" height="100%">
+                        <path class="path-element" d="M50,100 C150,50 250,150 350,100"/>
+                        <path class="path-element" d="M50,100 C150,150 250,50 350,100" opacity="0"/>
+                    </svg>
+                </div>
+                <div class="demo-scene" id="scene4">
+                    <div class="particle-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Debug check for anime.js
+        window.onload = function() {
+            const animeStatus = document.getElementById('anime-status');
+            if (typeof anime === 'undefined') {
+                animeStatus.textContent = 'Anime.js Status: NOT LOADED';
+                animeStatus.style.color = '#ff4444';
+                console.error('Anime.js is not loaded!');
+                return;
+            }
+            animeStatus.textContent = 'Anime.js Status: Loaded Successfully';
+            animeStatus.style.color = '#44ff44';
+            
+            // Start animations only if anime.js is loaded
+            initializeAnimations();
+        };
+
+        function initializeAnimations() {
+            const sceneStatus = document.getElementById('scene-status');
+            const demoScenes = [
+                {
+                    text: "Create a bouncing animation that feels energetic",
+                    setup: () => {
+                        anime({
+                            targets: '.bounce-element',
+                            translateY: [0, 150],
+                            translateX: [0, 200],
+                            direction: 'alternate',
+                            loop: true,
+                            duration: 1000,
+                            easing: 'easeInOutQuad'
+                        });
+                    }
+                },
+                {
+                    text: "Design a shape that morphs smoothly",
+                    setup: () => {
+                        anime({
+                            targets: '.morph-element',
+                            borderRadius: ['0%', '50%'],
+                            rotate: 180,
+                            scale: [1, 1.2],
+                            direction: 'alternate',
+                            loop: true,
+                            duration: 1500,
+                            easing: 'easeInOutElastic(1, .5)'
+                        });
+                    }
+                },
+                {
+                    text: "Draw a flowing line that moves like water",
+                    setup: () => {
+                        const paths = document.querySelectorAll('.path-element');
+                        
+                        anime({
+                            targets: '.path-element',
+                            strokeDashoffset: [anime.setDashoffset, 0],
+                            easing: 'easeInOutSine',
+                            duration: 2000,
+                            delay: function(el, i) { return i * 250 },
+                            loop: true
+                        });
+
+                        anime({
+                            targets: '.path-element',
+                            opacity: [0, 1],
+                            easing: 'easeInOutSine',
+                            duration: 2000,
+                            delay: function(el, i) { return i * 250 },
+                            direction: 'alternate',
+                            loop: true
+                        });
+
+                        anime({
+                            targets: '.path-element',
+                            d: [
+                                { value: 'M50,100 C150,50 250,150 350,100' },
+                                { value: 'M50,100 C150,150 250,50 350,100' }
+                            ],
+                            easing: 'easeInOutSine',
+                            duration: 2000,
+                            delay: function(el, i) { return i * 250 },
+                            direction: 'alternate',
+                            loop: true
+                        });
+                    }
+                },
+                {
+                    text: "Generate particles that dance and sparkle",
+                    setup: () => {
+                        const container = document.querySelector('.particle-container');
+                        container.innerHTML = '';
+                        for (let i = 0; i < 20; i++) {
+                            const particle = document.createElement('div');
+                            particle.style.cssText = `
+                                position: absolute;
+                                width: 8px;
+                                height: 8px;
+                                background: var(--primary);
+                                border-radius: 50%;
+                            `;
+                            container.appendChild(particle);
+                            
+                            anime({
+                                targets: particle,
+                                translateX: () => anime.random(-200, 200),
+                                translateY: () => anime.random(-100, 100),
+                                scale: [0, 1],
+                                opacity: [0, 1, 0],
+                                easing: 'easeOutExpo',
+                                duration: 2000,
+                                delay: anime.random(0, 500),
+                                loop: true
+                            });
+                        }
+                    }
+                }
+            ];
+
+            let currentScene = 0;
+
+            function switchScene() {
+                // Update debug info
+                sceneStatus.textContent = `Current Scene: ${currentScene + 1}`;
+                
+                // Hide all scenes
+                document.querySelectorAll('.demo-scene').forEach(scene => {
+                    scene.style.opacity = '0';
+                    scene.style.transition = 'opacity 0.3s ease';
+                });
+                
+                // Show and setup new scene
+                const scene = demoScenes[currentScene];
+                setTimeout(() => {
+                    const currentSceneElement = document.querySelector(`#scene${currentScene + 1}`);
+                    if (currentSceneElement) {
+                        currentSceneElement.style.opacity = '1';
+                        scene.setup();
+                    }
+                }, 300);
+                
+                // Type new text
+                typeText(scene.text, document.querySelector('.typing-text'));
+                
+                // Increment scene counter
+                currentScene = (currentScene + 1) % demoScenes.length;
+            }
+
+            function typeText(text, element) {
+                let index = 0;
+                element.textContent = '';
+                
+                function type() {
+                    if (index < text.length) {
+                        element.textContent += text[index];
+                        index++;
+                        setTimeout(type, 25);
+                    }
+                }
+                
+                type();
+            }
+
+            // Start the animation cycle
+            switchScene();
+            setInterval(switchScene, 3000);
+
+            // Logo animation
+            anime({
+                targets: '.logo-path',
+                strokeDashoffset: [anime.setDashoffset, 0],
+                easing: 'easeInOutSine',
+                duration: 1000,
+                delay: 200,
+                loop: true,
+                direction: 'alternate'
+            });
+        }
+    </script>
+</body>
+</html> 
